@@ -1,0 +1,73 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../paper-button/paper-button.html">
+<link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
+<link rel="import" href="../distributed-state-controller/distributed-state-controller.html">
+
+<dom-module id="card-sample-shared-toggle-composer">
+  <template>
+    <div>
+      <paper-button on-click="onSend" raised>Send</paper-button> Tap to add a shared toggle button
+    </div>
+  </template>
+  <script>
+    class CardSampleSharedToggleComposer extends Polymer.Element {
+      static get is() { return 'card-sample-shared-toggle-composer'; }
+      static get properties() {
+        return {
+          channel: Object
+        };
+      }
+      onSend() {
+        this.channel.sendCard(this, { json: {} }, true, false);
+      }
+    }
+    window.customElements.define(CardSampleSharedToggleComposer.is, CardSampleSharedToggleComposer);
+  </script>
+</dom-module>
+
+<dom-module id="card-sample-shared-toggle-viewer">
+  <template>
+    <div>
+      <paper-toggle-button on-click="onToggle" checked="[[data.checked]]">Tap to change the state for all participants</paper-toggle-button>
+    </div>
+  </template>
+  <script>
+    class CardSampleSharedToggleViewer extends Polymer.Element {
+      static get is() { return 'card-sample-shared-toggle-viewer'; }
+      static get properties() {
+        return {
+          data: Object,
+          channel: Object
+        };
+      }
+      constructor() {
+        super();
+        this.stateController = new DistributedStateController();
+      }
+      connectedCallback() {
+        super.connectedCallback();
+        this.stateController.initialize(this, this.data);
+      }
+      onToggle() {
+        this.stateController.updateProperty('checked', this.data.checked ? false : true);
+      }
+
+      handleCardToCardMessageReceived(participant, message) {
+        switch (message.json.type) {
+          case 'mutation':
+            this.stateController.handleInboundMutation(message.json.details, message);
+            break;
+          default:
+            break;
+        }
+      }
+      sendMutation(mutation) {
+        return this.channel.sendCardToCardMessage(this, { json: { type: "mutation", details: mutation } }, true, false);
+      }
+      setProperty(path, value) {
+        this.set('data.' + path, value);
+      }
+    }
+    window.customElements.define(CardSampleSharedToggleViewer.is, CardSampleSharedToggleViewer);
+  </script>
+</dom-module>
