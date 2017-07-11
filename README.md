@@ -77,5 +77,4 @@ This will start a local webserver with file mappings to create the appropriate e
 
 * Commit changes and push to the GitHub repository
 
-* Open a Channels-compliant client, create a test channel, click to set the composer, select "Import a component", and enter `ChannelElementsTeam/card-sample-shared-toggle`
-
+* Open a Channels-compliant client, create a test channel, click to set the composer, select "Import a component", and enter `ChannelElementsTeam/card-sample-shared-toggle`.  Then check to see if the component works correctly.
