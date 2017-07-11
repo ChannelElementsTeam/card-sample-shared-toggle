@@ -14,7 +14,13 @@ npm install -g polymer-cli
 
 * Open a shell and set the current working directory to the root folder of this repository
 
-* `polymer init` and select the default options (including that this is a "component")
+* Initialize the project:
+
+```
+polymer init
+```
+
+and select the default options (including that this is a "component")
 
 * Because this is a component that will be sharing state between cards, we are using the distributed-state-controller, and it needs to be added as a dependency.  Also, we'll use a couple of Polymer standard web components in our user interface.
 
