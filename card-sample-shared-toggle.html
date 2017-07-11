@@ -18,7 +18,7 @@
         };
       }
       onSend() {
-        this.channel.sendCard(this, { json: {} }, true, false);
+        this.channel.sendCard(this, { json: { checked: false } }, true, false);
       }
     }
     window.customElements.define(CardSampleSharedToggleComposer.is, CardSampleSharedToggleComposer);
