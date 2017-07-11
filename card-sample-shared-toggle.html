@@ -64,10 +64,10 @@
       }
 
       // If another card sends us something, we just pass it along to the state controller
-      handleCardToCardMessageReceived(participant, message) {
-        switch (message.json.type) {
+      handleCardToCardMessageReceived(participant, cardExchangeMessage, channelMessage) {
+        switch (cardExchangeMessage.json.details.data.type) {
           case 'mutation':
-            this.stateController.handleInboundMutation(message.json.details, message);
+            this.stateController.handleInboundMutation(cardExchangeMessage.json.details.data.details, channelMessage);
             break;
           default:
             break;
