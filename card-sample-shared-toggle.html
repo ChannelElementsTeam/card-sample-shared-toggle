@@ -1,7 +1,6 @@
-<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer-channels-card/polymer-channels-card.html">
 <link rel="import" href="../paper-button/paper-button.html">
 <link rel="import" href="../paper-toggle-button/paper-toggle-button.html">
-<link rel="import" href="../distributed-state-controller/distributed-state-controller.html">
 
 <dom-module id="card-sample-shared-toggle-composer">
   <template>
@@ -10,17 +9,10 @@
     </div>
   </template>
   <script>
-    class CardSampleSharedToggleComposer extends Polymer.Element {
+    class CardSampleSharedToggleComposer extends PolymerChannelsCardComposer {
       static get is() { return 'card-sample-shared-toggle-composer'; }
-      static get properties() {
-        return {
-          channel: Object
-        };
-      }
-      // For composing, we just send a card, initializing the checked state to false.
-      // The viewer will do all of the work.
       onSend() {
-        this.channel.sendCard(this, { json: { checked: false } }, true, false);
+        this.send({ checked: false });
       }
     }
     window.customElements.define(CardSampleSharedToggleComposer.is, CardSampleSharedToggleComposer);
@@ -30,57 +22,14 @@
 <dom-module id="card-sample-shared-toggle-viewer">
   <template>
     <div>
-      <!--Notice that the data binding is square brackets -- i.e., one-way -- meaning that a change to data.checked
-      will result in the toggle button changing to match automatically.  When the user changes it, the onToggle
-      handler will take care of the necessary updates (using the state controller).-->
       <paper-toggle-button on-change="onToggle" checked="[[data.checked]]">Tap to change the state for all participants</paper-toggle-button>
     </div>
   </template>
   <script>
-    class CardSampleSharedToggleViewer extends Polymer.Element {
+    class CardSampleSharedToggleViewer extends PolymerChannelsCardViewer {
       static get is() { return 'card-sample-shared-toggle-viewer'; }
-      static get properties() {
-        return {
-          data: Object,
-          channel: Object
-        };
-      }
-      constructor() {
-        super();
-        this.stateController = new DistributedStateController();
-      }
-      // connectedCallback is called by Polymer when the component is ready to start doing its work.
-      // At this point, the data property has been initialized by the client, and so this is when we
-      // can initialize the state in the state controller.
-      connectedCallback() {
-        super.connectedCallback();
-        this.stateController.initialize(this, this.data);
-      }
-      // When the user clicks on the toggle button, we tell the state controller what has happened.  It
-      // will send the necessary information to other cards and will update us (calling setProperty below)
-      // when there is any change -- local or remote
       onToggle(event) {
         this.stateController.updateProperty('checked', event.target.checked);
-      }
-
-      // If another card sends us something, we just pass it along to the state controller
-      handleCardToCardMessageReceived(participant, cardExchangeMessage, channelMessage) {
-        switch (cardExchangeMessage.json.details.data.type) {
-          case 'mutation':
-            this.stateController.handleInboundMutation(cardExchangeMessage.json.details.data.details, channelMessage);
-            break;
-          default:
-            break;
-        }
-      }
-      // When the state controller asks us to send a mutation, we just pass it along to the channel
-      sendMutation(mutation) {
-        return this.channel.sendCardToCardMessage(this, { json: { type: "mutation", details: mutation } }, true, false);
-      }
-      // When the state controller tells us that a property has changed, we update the data, and this will
-      // cause the toggle button to be updated because of its data binding.
-      setProperty(path, value) {
-        this.set('data.' + path, value);
       }
     }
     window.customElements.define(CardSampleSharedToggleViewer.is, CardSampleSharedToggleViewer);
