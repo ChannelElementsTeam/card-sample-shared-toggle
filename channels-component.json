@@ -1,4 +1,15 @@
 {
   "composerTag": "card-sample-shared-toggle-composer",
-  "viewerTag": "card-sample-shared-toggle-viewer"
+  "viewerTag": "card-sample-shared-toggle-viewer",
+  "name": "Shared Toggle Sample",
+  "categories": [
+    "samples/collaboration"
+  ],
+  "websiteUrl": "https://github.com/ChannelElementsTeam/card-sample-shared-toggle",
+  "description": "A sample card with a single shared toggle button",
+  "iconUrl": "images/icon.png",
+  "price": 0,
+  "requestsPayment": false,
+  "offersPayment": false,
+  "collaborative": true
 }
